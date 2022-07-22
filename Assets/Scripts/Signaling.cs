@@ -12,6 +12,14 @@ public class Signaling : MonoBehaviour
     private bool _isPlaying;
     public float _runningTime = 0;
 
+    private void Start()
+    {
+        _isPlaying = false;
+        _alarm = GetComponent<AudioSource>();
+        _door.OnOpen += PlaySound;
+        _door.OnClose += StopSound;
+    }
+
     private void Update()
     {
         if (_isPlaying)
@@ -26,14 +34,6 @@ public class Signaling : MonoBehaviour
             float normalizedTime = _runningTime / _duration;
             _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
         }
-    }
-
-    private void Start()
-    {
-        _isPlaying = false;
-        _alarm = GetComponent<AudioSource>();
-        _door.OnOpen += PlaySound;
-        _door.OnClose += StopSound;
     }
 
     private void PlaySound() 
