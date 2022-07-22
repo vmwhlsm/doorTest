@@ -10,7 +10,7 @@ public class Signaling : MonoBehaviour
     private float _targetVolume = 1;
     private float _duration = 5;
     private bool _isPlaying;
-    public float _runningTime = 0;
+    private float _runningTime = 0;
 
     private void Start()
     {
