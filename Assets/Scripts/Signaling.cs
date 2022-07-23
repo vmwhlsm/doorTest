@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
+
 public class Signaling : MonoBehaviour
 {
     [SerializeField] private Door _door;
@@ -12,6 +14,7 @@ public class Signaling : MonoBehaviour
     private float _duration = 5;
     private bool _isPlaying;
     private float _runningTime = 0;
+    private int _activeChangeVolumeNumber = 0;
 
     private void Start()
     {
@@ -35,28 +38,33 @@ public class Signaling : MonoBehaviour
     private IEnumerator ChangeVolume()
     {
         _alarm.Play();
+        _activeChangeVolumeNumber++;
 
-        while (_runningTime < _duration || _runningTime > 0) 
+        while (_alarm.volume > _baseVolume || _isPlaying == true) 
         {
-            int sign;
+            int sign = _isPlaying ? 1 : -1;
 
-            if (_isPlaying)
+            if (_alarm.volume < _targetVolume || _isPlaying == false)
             {
-                sign = 1;
+                _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, 0, _duration);
+                float normalizedTime = _runningTime / _duration;
+                _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
             }
-            else 
-            {
-                sign = -1;
-            }
-
-            _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, 0, _duration);
-            float normalizedTime = _runningTime / _duration;
-            _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
-
+          
             yield return null;
+
+            if (_activeChangeVolumeNumber > 1)
+            {
+                break;
+            }
         }
 
-        _alarm.Stop();
+        if (_activeChangeVolumeNumber == 1)
+        {
+            _alarm.Stop();
+        }
+
+        _activeChangeVolumeNumber--;
     }
     
     private void OnDestroy()

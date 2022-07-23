@@ -22,7 +22,7 @@ public class Door : MonoBehaviour
         remove => _closed.RemoveListener(value);
     }
 
-    private void Start()
+    void Start()
     {
         _isOpened = false;
     }
