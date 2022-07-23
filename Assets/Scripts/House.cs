@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Collider2D))]
+
 public class House : MonoBehaviour
 {
     private Door _door;
@@ -12,8 +14,8 @@ public class House : MonoBehaviour
     {
         _houseCollider = GetComponent<Collider2D>();
         _door = GetComponentInChildren<Door>();
-        _door.OnOpen += EnableCollider;
-        _door.OnClose += DisableCollider;
+        _door.Opened += EnableCollider;
+        _door.Closed += DisableCollider;
     }
 
     private void EnableCollider()
@@ -24,5 +26,11 @@ public class House : MonoBehaviour
     private void DisableCollider()
     {
         _houseCollider.enabled = false;
+    }
+
+    private void OnDestroy()
+    {
+        _door.Opened -= EnableCollider;
+        _door.Closed -= DisableCollider;
     }
 }

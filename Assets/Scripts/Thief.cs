@@ -6,6 +6,7 @@ public class Thief : MonoBehaviour
 {
     [SerializeField] private List<Transform> _pathTargets;
     [SerializeField] private float _speed;
+
     private Queue<Transform> _queuePathTargets;
 
     private void Start()

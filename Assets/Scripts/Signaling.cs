@@ -5,6 +5,7 @@ using UnityEngine;
 public class Signaling : MonoBehaviour
 {
     [SerializeField] private Door _door;
+
     private AudioSource _alarm;
     private float _baseVolume = 0;
     private float _targetVolume = 1;
@@ -16,23 +17,19 @@ public class Signaling : MonoBehaviour
     {
         _isPlaying = false;
         _alarm = GetComponent<AudioSource>();
-        _door.OnOpen += PlaySound;
-        _door.OnClose += StopSound;
+        _door.Opened += PlaySound;
+        _door.Closed += StopSound;
     }
 
     private void Update()
     {
         if (_isPlaying)
         {
-            _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime, 0, _duration);
-            float normalizedTime = _runningTime / _duration;
-            _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
+            VolumeChange(1);
         }
         else
         {
-            _runningTime = Mathf.Clamp(_runningTime - Time.deltaTime, 0, _duration);
-            float normalizedTime = _runningTime / _duration;
-            _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
+            VolumeChange(-1);
         }
     }
 
@@ -46,5 +43,19 @@ public class Signaling : MonoBehaviour
     private void StopSound()
     {
         _isPlaying = false;
+    }
+
+    private void VolumeChange(int sign)
+    {
+        _runningTime = Mathf.Clamp(_runningTime + (Time.deltaTime * sign), 0, _duration);
+        float normalizedTime = _runningTime / _duration;
+        _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
+    }
+
+
+    private void OnDestroy()
+    {
+        _door.Opened -= PlaySound;
+        _door.Closed -= StopSound;
     }
 }
