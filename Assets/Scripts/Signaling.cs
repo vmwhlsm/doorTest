@@ -15,29 +15,16 @@ public class Signaling : MonoBehaviour
 
     private void Start()
     {
-        _isPlaying = false;
         _alarm = GetComponent<AudioSource>();
         _door.Opened += PlaySound;
         _door.Closed += StopSound;
-    }
-
-    private void Update()
-    {
-        if (_isPlaying)
-        {
-            VolumeChange(1);
-        }
-        else
-        {
-            VolumeChange(-1);
-        }
     }
 
     private void PlaySound() 
     {
         _alarm.volume = _baseVolume;
         _isPlaying = true;
-        _alarm.Play();       
+        StartCoroutine(ChangeVolume());
     }
 
     private void StopSound()
@@ -45,14 +32,33 @@ public class Signaling : MonoBehaviour
         _isPlaying = false;
     }
 
-    private void VolumeChange(int sign)
+    private IEnumerator ChangeVolume()
     {
-        _runningTime = Mathf.Clamp(_runningTime + (Time.deltaTime * sign), 0, _duration);
-        float normalizedTime = _runningTime / _duration;
-        _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
+        _alarm.Play();
+
+        while (_runningTime < _duration || _runningTime > 0) 
+        {
+            int sign;
+
+            if (_isPlaying)
+            {
+                sign = 1;
+            }
+            else 
+            {
+                sign = -1;
+            }
+
+            _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, 0, _duration);
+            float normalizedTime = _runningTime / _duration;
+            _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
+
+            yield return null;
+        }
+
+        _alarm.Stop();
     }
-
-
+    
     private void OnDestroy()
     {
         _door.Opened -= PlaySound;
