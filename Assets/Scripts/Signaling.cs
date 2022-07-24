@@ -30,19 +30,19 @@ public class Signaling : MonoBehaviour
         _isPlaying = true;
         _activeChangeVolumeNumber++;
         _alarm.Play();
-        StartCoroutine(ChangeVolume());
+        StartCoroutine(ChangeVolume(_targetVolume));
     }
 
     private void StopSound()
     {
         _isPlaying = false;
         _activeChangeVolumeNumber++;
-        StartCoroutine(ChangeVolume());
+        StartCoroutine(ChangeVolume(_baseVolume));
     }
 
-    private IEnumerator ChangeVolume()
+    private IEnumerator ChangeVolume(float targetVolume)
     {
-        while ((_alarm.volume < _targetVolume && _isPlaying == true) || (_alarm.volume > _baseVolume && _isPlaying == false)) 
+        while (_alarm.volume != targetVolume) 
         {
             int sign = _isPlaying ? 1 : -1;
             _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, _minRunningTime, _duration);
