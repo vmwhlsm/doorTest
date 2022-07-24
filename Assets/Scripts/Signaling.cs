@@ -36,6 +36,7 @@ public class Signaling : MonoBehaviour
     private void StopSound()
     {
         _isPlaying = false;
+        _activeChangeVolumeNumber++;
         StartCoroutine(ChangeVolume());
     }
 
