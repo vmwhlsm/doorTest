@@ -28,41 +28,30 @@ public class Signaling : MonoBehaviour
     {
         _alarm.volume = _baseVolume;
         _isPlaying = true;
+        _activeChangeVolumeNumber++;
+        _alarm.Play();
         StartCoroutine(ChangeVolume());
     }
 
     private void StopSound()
     {
         _isPlaying = false;
+        StartCoroutine(ChangeVolume());
     }
 
     private IEnumerator ChangeVolume()
     {
-        _alarm.Play();
-        _activeChangeVolumeNumber++;
-
-        while (_alarm.volume > _baseVolume || _isPlaying == true) 
+        while ((_alarm.volume < _targetVolume && _isPlaying == true) || (_alarm.volume > _baseVolume && _isPlaying == false)) 
         {
             int sign = _isPlaying ? 1 : -1;
-
-            if (_alarm.volume < _targetVolume || _isPlaying == false)
-            {
-                _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, _minRunningTime, _duration);
-                float normalizedTime = _runningTime / _duration;
-                _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
-            }
+            _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, _minRunningTime, _duration);
+            float normalizedTime = _runningTime / _duration;
+            _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
           
             yield return null;
 
             if (_activeChangeVolumeNumber > 1)
-            {
                 break;
-            }
-        }
-
-        if (_activeChangeVolumeNumber == 1)
-        {
-            _alarm.Stop();
         }
 
         _activeChangeVolumeNumber--;
