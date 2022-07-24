@@ -43,17 +43,20 @@ public class Door : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.TryGetComponent<Thief>(out _))
-        {
-            Interact();
-        }
+        InteractIfThief(collision);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
+    {
+        InteractIfThief(collision);
+    }
+
+    private void InteractIfThief(Collider2D collision)
     {
         if (collision.gameObject.TryGetComponent<Thief>(out _))
         {
             Interact();
         }
     }
+
 }

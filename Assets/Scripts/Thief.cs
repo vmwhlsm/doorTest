@@ -7,6 +7,7 @@ public class Thief : MonoBehaviour
     [SerializeField] private List<Transform> _pathTargets;
     [SerializeField] private float _speed;
 
+    private float _touchDistance = 0.5f;
     private Queue<Transform> _queuePathTargets;
 
     private void Start()
@@ -20,7 +21,7 @@ public class Thief : MonoBehaviour
         {
             var target = _queuePathTargets.Peek();
 
-            if (Mathf.Abs(transform.position.x - target.transform.position.x) > 0.5)
+            if (Mathf.Abs(transform.position.x - target.transform.position.x) > _touchDistance)
             {
                 MoveTo(target.transform);
             }
