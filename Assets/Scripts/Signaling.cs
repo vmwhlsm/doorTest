@@ -15,6 +15,7 @@ public class Signaling : MonoBehaviour
     private bool _isPlaying;
     private float _runningTime = 0;
     private int _activeChangeVolumeNumber = 0;
+    private float _minRunningTime = 0;
 
     private void Start()
     {
@@ -46,7 +47,7 @@ public class Signaling : MonoBehaviour
 
             if (_alarm.volume < _targetVolume || _isPlaying == false)
             {
-                _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, 0, _duration);
+                _runningTime = Mathf.Clamp(_runningTime + Time.deltaTime * sign, _minRunningTime, _duration);
                 float normalizedTime = _runningTime / _duration;
                 _alarm.volume = Mathf.Lerp(_baseVolume, _targetVolume, normalizedTime);
             }

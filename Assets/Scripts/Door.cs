@@ -27,11 +27,12 @@ public class Door : MonoBehaviour
         _isOpened = false;
     }
 
-    public void Open()
+    public void Interact()
     {
         if (_isOpened)
         {
-            return;
+            _isOpened = false;
+            _closed.Invoke();
         }
         else
         {
@@ -40,32 +41,19 @@ public class Door : MonoBehaviour
         }
     }
 
-    public void Close()
-    {
-        if (_isOpened == false)
-        {
-            return;
-        }
-        else
-        {
-            _isOpened = false;
-            _closed.Invoke();
-        }
-    }
-
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.TryGetComponent<Thief>(out _))
         {
-            Open();
+            Interact();
         }
     }
 
-    void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.TryGetComponent<Thief>(out _))
         {
-            Close();
+            Interact();
         }
     }
 }
